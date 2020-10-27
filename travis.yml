@@ -1,0 +1,28 @@
+language: php
+
+php:
+  - 7.4snapshot
+  - nightly
+
+matrix:
+  allow_failures:
+    - php: nightly
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+branches:
+  only:
+    - main
+
+before_install:
+  - test "$TRAVIS_PHP_VERSION" != "nightly" || export COMPOSER_FLAGS="$COMPOSER_FLAGS --ignore-platform-reqs"
+
+install:
+  - composer install --prefer-source $COMPOSER_FLAGS
+
+script:
+  - vendor/bin/phpstan analyse -vvv --no-progress src/
